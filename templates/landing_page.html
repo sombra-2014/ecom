@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi E-commerce de Bicicletas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Animación para el degradado de fondo */
+        @keyframes subtleGradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Degradado de fondo más moderno y animado */
+            background: linear-gradient(135deg, #2c3e50, #34495e, #2980b9, #8e44ad, #2c3e50);
+            background-size: 400% 400%; /* Tamaño más grande para la animación */
+            animation: subtleGradientShift 20s ease infinite; /* Animación sutil */
+            color: #ecf0f1; /* Color de texto más claro para el fondo oscuro */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: rgba(44, 62, 80, 0.95); /* Fondo oscuro con transparencia */
+            padding: 15px 0;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+            position: sticky; /* Sticky para que la barra se pegue al scroll */
+            top: 0;
+            z-index: 999;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 18px; /* Mayor espacio entre enlaces */
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .navbar a:hover {
+            color: #8e44ad; /* Tono morado al pasar el ratón */
+            transform: translateY(-2px); /* Pequeño efecto al pasar el ratón */
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{{ url_for('static', filename='images/bike_hero.jpg') }}") no-repeat center center/cover;
+            color: white;
+            text-align: center;
+            padding: 120px 20px; /* Mayor padding */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; /* Inicialmente invisible para animación */
+            animation: fadeIn 1.5s ease-out 0.5s forwards; /* Animación de aparición */
+        }
+        /* Animación de aparición para hero-section */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-section h1 {
+            font-size: 4em; /* Fuente más grande */
+            margin-bottom: 25px;
+            font-weight: 800; /* Más audaz */
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.7); /* Sombra más definida */
+            letter-spacing: 1px; /* Espaciado entre letras */
+        }
+        .hero-section p {
+            font-size: 1.6em; /* Fuente ligeramente más grande */
+            margin-bottom: 50px;
+            max-width: 800px; /* Ancho máximo para el párrafo */
+            line-height: 1.7;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+        .hero-section .button {
+            background-color: #28a745; /* Verde vibrante */
+            color: white;
+            padding: 18px 35px; /* Mayor padding para el botón */
+            text-decoration: none;
+            border-radius: 8px; /* Bordes más redondeados */
+            font-size: 1.3em;
+            font-weight: 700;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Sombra para el botón */
+        }
+        .hero-section .button:hover {
+            background-color: #218838; /* Verde más oscuro al pasar el ratón */
+            transform: translateY(-3px); /* Mayor efecto de elevación */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+
+        .footer {
+            background-color: #2c3e50; /* Color que combina con el fondo */
+            color: #ecf0f1;
+            text-align: center;
+            padding: 25px 0;
+            font-size: 0.95em;
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.3);
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Estilos para el botón flotante de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            width: 65px; /* Tamaño ligeramente más grande */
+            height: 65px;
+            bottom: 45px;
+            right: 45px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50%; /* Asegura que sea un círculo perfecto */
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* Sombra más suave */
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.15) rotate(5deg); /* Efecto de escala y rotación */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+        }
+
+        .whatsapp-icon {
+            width: 38px; /* Icono ligeramente más grande */
+            height: 38px;
+        }
+
+        /* --- Media Queries para responsividad --- */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 0;
+            }
+            .navbar a {
+                margin: 0 10px;
+                font-size: 0.9em;
+            }
+
+            .hero-section {
+                padding: 80px 15px;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5em;
+                margin-bottom: 20px;
+            }
+
+            .hero-section p {
+                font-size: 1.2em;
+                margin-bottom: 35px;
+                padding: 0 10px;
+            }
+
+            .hero-section .button {
+                padding: 14px 28px;
+                font-size: 1.1em;
+            }
+            
+            .whatsapp-float {
+                width: 55px;
+                height: 55px;
+                bottom: 25px;
+                right: 25px;
+                font-size: 25px;
+            }
+            .whatsapp-icon {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar a {
+                margin: 0 6px;
+                font-size: 0.8em;
+            }
+            .hero-section {
+                padding: 50px 10px;
+            }
+            .hero-section h1 {
+                font-size: 2em;
+            }
+            .hero-section p {
+                font-size: 1em;
+            }
+            .hero-section .button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+            .whatsapp-float {
+                width: 48px;
+                height: 48px;
+                bottom: 15px;
+                right: 15px;
+                font-size: 22px;
+            }
+            .whatsapp-icon {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('landing_page') }}">Inicio</a>
+        <a href="{{ url_for('products_page') }}">Productos</a>
+        <a href="{{ url_for('view_cart') }}">Ver Carrito</a>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+        {% elif not current_user.is_authenticated %}
+            <a href="{{ url_for('login') }}">Acceso Admin</a>
+        {% else %} {# Esto cubriría a usuarios logueados pero no admin #}
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+        {% endif %}
+    </div>
+
+    <div class="hero-section">
+        <h1>Bienvenido a Mi E-commerce de Bicicletas</h1>
+        <p>Encuentra la bicicleta perfecta para tu próxima aventura. ¡Calidad y rendimiento garantizados!</p>
+        <a href="{{ url_for('products_page') }}" class="button">Explorar Bicicletas</a>
+    </div>
+    <a href="https://wa.me/541125771022?text=Hola!%20Quisiera%20hacer%20una%20consulta%20sobre%20sus%20productos%20de%20bicicletas." class="whatsapp-float" target="_blank">
+        <img src="{{ url_for('static', filename='images/wat.jpg') }}" alt="WhatsApp" class="whatsapp-icon">
+          </a>
+
+          <a href="https://wa.me/541125771022?text=¡Hola!%20Necesito%20asesoramiento%20para%20elegir%20una%20bicicleta.%20¿Podrían%20ayudarme?" class="whatsapp-float" target="_blank">
+            <img src="{{ url_for('static', filename='images/wat.jpg') }}" alt="WhatsApp" class="whatsapp-icon">
+        </a>
+
+        <a href="https://wa.me/541125771022?text=¡Hola!%20Dejanos%20tu%20consulta%20y%20te%20responderemos%20a%20la%20brevedad%20posible." class="whatsapp-float" target="_blank">
+            <img src="{{ url_for('static', filename='images/wat.jpg') }}" alt="WhatsApp" class="whatsapp-icon">
+        </a>
+    <div class="footer">
+        © 2024 Mi E-commerce de Bicicletas. Todos los derechos reservados.
+    </div>
+
+   
+</body>
+</html>

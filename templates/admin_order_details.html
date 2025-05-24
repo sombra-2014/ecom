@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Pedido #{{ order.id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Animación para el degradado de fondo - consistente con todas las páginas */
+        @keyframes subtleGradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Fondo degradado animado */
+            background: linear-gradient(135deg, #2c3e50, #34495e, #2980b9, #8e44ad, #2c3e50);
+            background-size: 400% 400%;
+            animation: subtleGradientShift 20s ease infinite;
+            color: #ecf0f1; /* Texto claro para el fondo oscuro */
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Contenedor principal - consistente con el estilo moderno */
+        .container {
+            max-width: 950px; /* Un poco más ancho para mejor visualización de detalles */
+            margin: 30px auto; /* Más margen */
+            padding: 30px; /* Más padding */
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border-radius: 12px; /* Más redondeado */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); /* Sombra pronunciada */
+            backdrop-filter: blur(5px); /* Efecto de desenfoque */
+            -webkit-backdrop-filter: blur(5px);
+            flex-grow: 1;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            color: #ecf0f1; /* Color de texto claro para los títulos */
+            text-align: center;
+            margin-bottom: 35px; /* Más margen inferior */
+            font-size: 2.8em; /* Más grande */
+            font-weight: 800; /* Más audaz */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5); /* Sombra de texto */
+        }
+
+        h2 {
+            font-size: 2em; /* Más pequeño que h1 */
+            margin-top: 40px; /* Margen superior para el segundo h2 */
+            margin-bottom: 25px;
+        }
+
+        /* Mensajes flash - consistente */
+        .flash-messages {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .flash {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+            animation: fadeIn 0.5s ease-out;
+            color: white; /* Color de texto para los mensajes flash */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .flash.success {
+            background-color: #28a745; /* Verde vibrante */
+            border: 1px solid #218838;
+        }
+        .flash.error {
+            background-color: #dc3545; /* Rojo de error */
+            border: 1px solid #c82333;
+        }
+        .flash.info {
+            background-color: #17a2b8; /* Azul info */
+            border: 1px solid #138496;
+        }
+
+        /* Resumen del pedido */
+        .order-summary {
+            background-color: rgba(0, 123, 255, 0.2); /* Azul primario más suave y transparente */
+            border: 1px solid rgba(0, 123, 255, 0.4);
+            border-radius: 10px; /* Más redondeado */
+            padding: 20px; /* Más padding */
+            margin-bottom: 30px; /* Más margen inferior */
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .order-summary p {
+            margin: 8px 0; /* Más espacio entre párrafos */
+            font-size: 1.15em; /* Más grande */
+            color: #ecf0f1; /* Texto claro */
+            font-weight: 400;
+        }
+        .order-summary strong {
+            color: #ffc107; /* Amarillo vibrante para los labels */
+            font-weight: 700;
+            margin-right: 5px;
+        }
+
+        /* Estado del pedido dentro del resumen */
+        .order-summary .status-pending { color: #ffeb3b; font-weight: 700; } /* Amarillo más brillante */
+        .order-summary .status-completed { color: #8bc34a; font-weight: 700; } /* Verde más brillante */
+        .order-summary .status-cancelled { color: #ef5350; font-weight: 700; } /* Rojo más brillante */
+        .order-summary .status-shipped { color: #03a9f4; font-weight: 700; } /* Azul más brillante */
+
+
+        /* Tabla de productos en el pedido */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px; /* Más margen superior */
+            background-color: rgba(255, 255, 255, 0.05); /* Fondo semitransparente para la tabla */
+            border-radius: 10px;
+            overflow: hidden; /* Asegura que los bordes redondeados funcionen bien */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        th, td {
+            padding: 15px 20px; /* Más padding */
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Borde más sutil */
+            color: #ecf0f1; /* Color de texto claro */
+        }
+
+        th {
+            background-color: rgba(0, 123, 255, 0.5); /* Azul primario semitransparente para el encabezado */
+            color: white;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03); /* Fondo alterno aún más sutil */
+        }
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.08); /* Efecto hover en filas */
+        }
+
+        /* Enlace de volver */
+        .back-link {
+            display: inline-block; /* Para centrar con margen auto */
+            background-color: #28a745; /* Verde para el botón de volver */
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 40px; /* Más margen superior */
+            font-weight: 700;
+            font-size: 1.1em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .back-link:hover {
+            background-color: #218838;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+        .center-link-wrapper {
+            text-align: center; /* Para centrar el botón */
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.2em;
+            color: #bdc3c7;
+            margin-top: 30px;
+        }
+
+        /* Media Queries para responsividad */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 20px auto;
+                max-width: 95%;
+            }
+            h1 {
+                font-size: 2.2em;
+                margin-bottom: 25px;
+            }
+            h2 {
+                font-size: 1.8em;
+                margin-top: 30px;
+                margin-bottom: 20px;
+            }
+            .order-summary p {
+                font-size: 1em;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block; /* Para apilar en pantallas pequeñas */
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                margin-bottom: 15px;
+                border-radius: 8px;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+                font-size: 1em;
+            }
+            td:before {
+                position: absolute;
+                top: 0;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: 700;
+                color: #8e44ad; /* Color de acento para las etiquetas */
+            }
+            /* Etiquetas para las celdas en móvil */
+            td:nth-of-type(1):before { content: "Producto:"; }
+            td:nth-of-type(2):before { content: "Cantidad:"; }
+            td:nth-of-type(3):before { content: "Precio Unitario:"; }
+            td:nth-of-type(4):before { content: "Subtotal:"; }
+
+            .back-link {
+                width: calc(100% - 60px); /* Ajuste para padding */
+                font-size: 1em;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            .container {
+                padding: 15px;
+            }
+            .order-summary {
+                padding: 15px;
+            }
+            .order-summary p {
+                font-size: 0.95em;
+            }
+            td {
+                padding-left: 40%;
+                font-size: 0.95em;
+            }
+            td:before {
+                width: 35%;
+            }
+            .back-link {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Detalles del Pedido #{{ order.id }}</h1>
+
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{ category }} flash">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="order-summary">
+            <p><strong>ID Pedido:</strong> {{ order.id }}</p>
+            <p><strong>Cliente (ID):</strong> {{ order.user_id if order.user_id else 'Invitado' }}</p>
+            <p><strong>Fecha:</strong> {{ order.date_created.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>Monto Total:</strong> ${{ "%.2f"|format(order.total_amount) }}</p>
+            <p><strong>Estado:</strong>
+                <span class="status-{{ order.status.lower() }}">
+                    {{ order.status }}
+                </span>
+            </p>
+        </div>
+
+        <h2>Productos en este Pedido</h2>
+        {% if order_items %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order_items %}
+                <tr>
+                    <td>{{ item.product_name_at_purchase }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>${{ "%.2f"|format(item.price_at_purchase) }}</td>
+                    <td>${{ "%.2f"|format(item.price_at_purchase * item.quantity) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p>No hay productos registrados para este pedido.</p>
+        {% endif %}
+
+        <div class="center-link-wrapper">
+            <a href="{{ url_for('admin_orders') }}" class="back-link">Volver a la Lista de Pedidos</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ 'Editar Producto' if product else 'Añadir Nuevo Producto' }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Animación para el degradado de fondo - consistente con todas las páginas */
+        @keyframes subtleGradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Fondo degradado animado */
+            background: linear-gradient(135deg, #2c3e50, #34495e, #2980b9, #8e44ad, #2c3e50);
+            background-size: 400% 400%;
+            animation: subtleGradientShift 20s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333; /* Color de texto predeterminado para el contenido del contenedor */
+        }
+
+        /* Contenedor principal - consistente con el estilo moderno */
+        .container {
+            background-color: rgba(255, 255, 255, 0.98); /* Fondo casi opaco para el formulario */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+            width: 100%;
+            max-width: 650px; /* Un poco más ancho para campos cómodos */
+            text-align: center;
+            animation: fadeInScale 0.5s ease-out; /* Animación de aparición */
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            color: #007bff; /* Azul primario para el título */
+            margin-bottom: 35px; /* Más margen inferior */
+            font-weight: 800; /* Más audaz */
+            font-size: 2.5em; /* Más grande */
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* Sombra sutil para el texto */
+        }
+
+        /* Mensajes flash - consistente */
+        .flashes {
+            list-style: none; /* Eliminar viñetas de lista */
+            padding: 0;
+            margin-bottom: 25px;
+        }
+        .flash {
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 10px;
+            animation: fadeIn 0.5s ease-out;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .flash.success {
+            background-color: #28a745; /* Verde vibrante */
+            color: white;
+            border: 1px solid #218838;
+        }
+        .flash.error {
+            background-color: #dc3545; /* Rojo de error */
+            color: white;
+            border: 1px solid #c82333;
+        }
+        .flash.info {
+            background-color: #17a2b8; /* Azul info */
+            color: white;
+            border: 1px solid #138496;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Grupo de formulario */
+        .form-group {
+            margin-bottom: 25px; /* Más espacio entre grupos */
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px; /* Más espacio bajo la etiqueta */
+            color: #34495e; /* Color oscuro para la etiqueta */
+            font-weight: 700; /* Más audaz */
+            font-size: 1em; /* Un poco más grande */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: calc(100% - 28px); /* Ajuste para padding */
+            padding: 14px; /* Más padding */
+            border: 1px solid #ced4da;
+            border-radius: 8px; /* Más redondeado */
+            box-sizing: border-box;
+            font-size: 1.05em; /* Ligeramente más grande */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f8f9fa; /* Fondo ligeramente gris */
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.35); /* Sombra de enfoque más prominente */
+            outline: none;
+        }
+
+        /* Botones de acción (Submit y Cancelar) */
+        button[type="submit"],
+        .button.cancel-btn {
+            background-color: #007bff; /* Azul para Guardar/Añadir */
+            color: white;
+            padding: 15px 30px; /* Más padding */
+            border: none;
+            border-radius: 8px; /* Más redondeado */
+            cursor: pointer;
+            font-size: 1.15em; /* Más grande */
+            font-weight: 700; /* Más audaz */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            width: 100%;
+            margin-top: 20px; /* Más margen superior */
+            text-decoration: none; /* Para el 'a' que se ve como botón */
+            display: inline-block; /* Para el 'a' que se ve como botón */
+            box-sizing: border-box; /* Para el 'a' que se ve como botón */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+
+        .button.cancel-btn {
+            background-color: #6c757d; /* Gris para Cancelar */
+            margin-top: 15px; /* Separación entre botones */
+        }
+
+        .button.cancel-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+
+        /* Contenedor de la imagen actual */
+        .current-image-container {
+            margin-top: 25px; /* Más margen superior */
+            margin-bottom: 30px; /* Más margen inferior */
+            text-align: center;
+            padding: 20px; /* Más padding */
+            background-color: #e9f7ef; /* Un verde claro suave */
+            border: 2px dashed #28a745; /* Borde punteado vibrante */
+            border-radius: 10px; /* Más redondeado */
+        }
+        .current-image-container p {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        .current-image-container img {
+            max-width: 200px; /* Un poco más grande */
+            max-height: 200px;
+            border: 4px solid #007bff; /* Borde azul vibrante */
+            padding: 6px;
+            border-radius: 10px; /* Más redondeado */
+            object-fit: cover;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2); /* Sombra más pronunciada */
+        }
+
+        /* Estilos para el botón flotante de WhatsApp (consistente) */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366; /* Color de WhatsApp */
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 4px 4px 6px #666;
+        }
+
+        .whatsapp-icon {
+            width: 35px;
+            height: 35px;
+        }
+
+        /* Media Queries para responsividad */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+                max-width: 95%;
+            }
+            h1 {
+                font-size: 2em;
+                margin-bottom: 25px;
+            }
+            label {
+                font-size: 0.9em;
+            }
+            input[type="text"],
+            input[type="number"],
+            input[type="file"] {
+                padding: 10px;
+                font-size: 1em;
+            }
+            button[type="submit"], .button.cancel-btn {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+            .whatsapp-float {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 25px;
+            }
+            .whatsapp-icon {
+                width: 30px;
+                height: 30px;
+            }
+            .current-image-container img {
+                max-width: 150px;
+                max-height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.7em;
+            }
+            label {
+                font-size: 0.85em;
+            }
+            input[type="text"],
+            input[type="number"],
+            input[type="file"] {
+                padding: 8px;
+                font-size: 0.9em;
+            }
+            button[type="submit"], .button.cancel-btn {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+            .whatsapp-float {
+                width: 45px;
+                height: 45px;
+                bottom: 15px;
+                right: 15px;
+            }
+            .whatsapp-icon {
+                width: 25px;
+                height: 25px;
+            }
+            .current-image-container img {
+                max-width: 120px;
+                max-height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ 'Editar Producto' if product else 'Añadir Nuevo Producto' }}</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }} flash">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('admin_edit_product', product_id=product.id) if product else url_for('admin_add_product') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" value="{{ product.nombre if product else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="precio">Precio:</label>
+                <input type="number" id="precio" name="precio" step="0.01" min="0" value="{{ product.precio if product else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" min="0" value="{{ product.stock if product else '' }}" required>
+            </div>
+
+            {% if product and product.imagen %}
+            <div class="current-image-container">
+                <p>Imagen actual:</p>
+                <img src="{{ url_for('static', filename='uploads/' + product.imagen) }}" alt="{{ product.nombre }}">
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="imagen">Seleccionar Imagen (opcional para editar/añadir):</label>
+                <input type="file" id="imagen" name="imagen" accept="image/*">
+            </div>
+
+            <button type="submit">{{ 'Actualizar Producto' if product else 'Añadir Producto' }}</button>
+            {# Enlace de cancelar directamente al dashboard de admin #}
+            <a href="{{ url_for('admin_dashboard') }}" class="button cancel-btn">Cancelar</a>
+        </form>
+    </div>
+
+    
+</body>
+</html>

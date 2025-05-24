@@ -1,0 +1,51 @@
+[
+    {
+        "id": "1",
+        "nombre": "Teclado Mec\u00e1nico flavia",
+        "precio": 75.0,
+        "stock": 10,
+        "imagen": "/static/uploads/teclado.jpg"
+    },
+    {
+        "id": "2",
+        "nombre": "Mouse Gaming Ergon\u00f3mico",
+        "precio": 35.5,
+        "stock": 15,
+        "imagen": "/static/uploads/mouse.jpg"
+    },
+    {
+        "id": "3",
+        "nombre": "Auriculares con Micr\u00f3fono HD",
+        "precio": 60.0,
+        "stock": 6,
+        "imagen": "/static/uploads/auriculares.jpg"
+    },
+    {
+        "id": "4",
+        "nombre": "perro galgo puto",
+        "precio": 44.0,
+        "stock": 0,
+        "imagen": null
+    },
+    {
+        "id": "5",
+        "nombre": "arg",
+        "precio": 44.0,
+        "stock": 1,
+        "imagen": "/static/uploads/arg.png"
+    },
+    {
+        "id": "6",
+        "nombre": "dubel",
+        "precio": 23.0,
+        "stock": 8,
+        "imagen": "/static/uploads/perro.jpeg"
+    },
+    {
+        "id": "7",
+        "nombre": "javier herr",
+        "precio": 1.0,
+        "stock": 2,
+        "imagen": "/static/uploads/WhatsApp_Image_2025-05-21_at_16.42.41.jpeg"
+    }
+]

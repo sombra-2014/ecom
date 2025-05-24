@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestras Bicicletas - Mi E-commerce</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Animación para el degradado de fondo */
+        @keyframes subtleGradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Degradado de fondo más moderno y animado */
+            background: linear-gradient(135deg, #2c3e50, #34495e, #2980b9, #8e44ad, #2c3e50);
+            background-size: 400% 400%; /* Tamaño más grande para la animación */
+            animation: subtleGradientShift 20s ease infinite; /* Animación sutil */
+            color: #ecf0f1; /* Color de texto más claro para el fondo oscuro */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: rgba(44, 62, 80, 0.95); /* Fondo oscuro con transparencia */
+            padding: 15px 0;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Sombra más pronunciada */
+            position: sticky; /* Sticky para que la barra se pegue al scroll */
+            top: 0;
+            z-index: 999;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 18px; /* Mayor espacio entre enlaces */
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .navbar a:hover {
+            color: #8e44ad; /* Tono morado al pasar el ratón */
+            transform: translateY(-2px); /* Pequeño efecto al pasar el ratón */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto; /* Aumentado el margen superior para más espacio */
+            padding: 30px; /* Aumentado el padding */
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente para el contenedor */
+            border-radius: 12px; /* Bordes más redondeados */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); /* Sombra más pronunciada */
+            backdrop-filter: blur(5px); /* Efecto de desenfoque para el fondo */
+            -webkit-backdrop-filter: blur(5px); /* Para compatibilidad con Safari */
+            flex-grow: 1; /* Permite que el contenedor se expanda */
+        }
+        h1 {
+            color: #ecf0f1; /* Color de texto claro para el título */
+            text-align: center;
+            margin-bottom: 40px; /* Mayor margen inferior */
+            font-size: 3em; /* Fuente más grande */
+            font-weight: 800; /* Más audaz */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5); /* Sombra de texto */
+        }
+        .flash-messages {
+            margin-bottom: 30px; /* Mayor margen inferior */
+            text-align: center;
+            font-weight: 600;
+        }
+        .flash-messages .success {
+            background-color: #28a745; /* Verde vibrante */
+            color: white;
+            border: 1px solid #218838;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .flash-messages .error {
+            background-color: #dc3545; /* Rojo de error */
+            color: white;
+            border: 1px solid #c82333;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .flash-messages .info {
+            background-color: #17a2b8; /* Azul info */
+            color: white;
+            border: 1px solid #138496;
+            padding: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px; /* Mayor espacio entre productos */
+        }
+        .product-item {
+            background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Borde sutil */
+            border-radius: 10px; /* Bordes más redondeados */
+            padding: 25px; /* Mayor padding */
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Sombra más definida */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: #ecf0f1; /* Color de texto claro para los ítems */
+            position: relative; /* Para el efecto de "Nuevo" */
+            overflow: hidden; /* Para que la cinta "Nuevo" no se desborde */
+        }
+        .product-item:hover {
+            transform: translateY(-8px) scale(1.02); /* Efecto de elevación y ligera escala */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Sombra más intensa al hover */
+        }
+        .product-item img {
+            max-width: 100%;
+            height: 220px; /* Altura ligeramente mayor para las imágenes */
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: rgba(0,0,0,0.1); /* Fondo sutil para la imagen */
+            padding: 10px; /* Padding alrededor de la imagen */
+        }
+        .product-item h2 {
+            font-size: 1.8em; /* Fuente más grande */
+            margin-bottom: 12px;
+            color: #ecf0f1; /* Título claro */
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        .product-item p {
+            margin-bottom: 10px;
+            font-size: 1.15em;
+            color: #bdc3c7; /* Color de texto ligeramente más oscuro para el párrafo */
+        }
+        .product-item .price {
+            font-size: 2em; /* Precio más grande */
+            font-weight: 800;
+            color: #28a745; /* Verde vibrante para el precio */
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+        }
+        .product-item .stock {
+            font-size: 1em;
+            color: #95a5a6; /* Color de stock más sutil */
+            margin-bottom: 20px;
+        }
+        .add-to-cart-btn {
+            background-color: #28a745; /* Verde vibrante */
+            color: white;
+            padding: 15px 30px; /* Mayor padding */
+            text-decoration: none;
+            border-radius: 8px; /* Bordes más redondeados */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 700;
+            display: block;
+            margin-top: auto;
+            font-size: 1.1em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); /* Sombra para el botón */
+        }
+        .add-to-cart-btn:hover {
+            background-color: #218838; /* Verde más oscuro al pasar el ratón */
+            transform: translateY(-3px); /* Efecto de elevación */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+        .add-to-cart-btn[style*="background-color: #6c757d"] { /* Estilo para botón "Sin Stock" */
+            background-color: #6c757d !important;
+            cursor: not-allowed !important;
+            box-shadow: none;
+            transform: none;
+            opacity: 0.7;
+        }
+        .no-products {
+            text-align: center;
+            font-size: 1.8em;
+            color: #bdc3c7; /* Color claro para el mensaje */
+            padding: 80px;
+            font-weight: 600;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .footer {
+            background-color: #2c3e50; /* Color que combina con el fondo */
+            color: #ecf0f1;
+            text-align: center;
+            padding: 25px 0;
+            font-size: 0.95em;
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.3);
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Estilos para el botón flotante de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            width: 65px; /* Tamaño ligeramente más grande */
+            height: 65px;
+            bottom: 45px;
+            right: 45px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50%; /* Asegura que sea un círculo perfecto */
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4); /* Sombra más suave */
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.15) rotate(5deg); /* Efecto de escala y rotación */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+        }
+
+        .whatsapp-icon {
+            width: 38px; /* Icono ligeramente más grande */
+            height: 38px;
+        }
+
+        /* --- Media Queries para responsividad --- */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 0;
+            }
+            .navbar a {
+                margin: 0 10px;
+                font-size: 0.9em;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+                margin-bottom: 30px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .product-item {
+                padding: 20px;
+            }
+            .product-item img {
+                height: 180px;
+            }
+            .product-item h2 {
+                font-size: 1.5em;
+            }
+            .product-item .price {
+                font-size: 1.7em;
+            }
+            .add-to-cart-btn {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+            
+            .whatsapp-float {
+                width: 55px;
+                height: 55px;
+                bottom: 25px;
+                right: 25px;
+                font-size: 25px;
+            }
+            .whatsapp-icon {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar a {
+                margin: 0 6px;
+                font-size: 0.8em;
+            }
+            .container {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 25px;
+            }
+            .product-grid {
+                grid-template-columns: 1fr; /* Una columna en pantallas muy pequeñas */
+                gap: 15px;
+            }
+            .product-item {
+                padding: 15px;
+            }
+            .product-item img {
+                height: 160px;
+            }
+            .product-item h2 {
+                font-size: 1.3em;
+            }
+            .product-item .price {
+                font-size: 1.5em;
+            }
+            .add-to-cart-btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+            .whatsapp-float {
+                width: 48px;
+                height: 48px;
+                bottom: 15px;
+                right: 15px;
+                font-size: 22px;
+            }
+            .whatsapp-icon {
+                width: 28px;
+                height: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="{{ url_for('landing_page') }}">Inicio</a>
+        <a href="{{ url_for('products_page') }}">Productos</a>
+        <a href="{{ url_for('view_cart') }}">Ver Carrito</a>
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+        {% elif not current_user.is_authenticated %}
+            <a href="{{ url_for('login') }}">Acceso Admin</a>
+        {% else %} {# Esto cubriría a usuarios logueados pero no admin #}
+            <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
+        {% endif %}
+    </div>
+
+    <div class="container">
+        <h1>Nuestras Bicicletas</h1>
+
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-item">
+                {% if product.imagen %}
+                    <img src="{{ url_for('static', filename='uploads/' + product.imagen) }}" alt="{{ product.nombre }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename='uploads/default_bike.png') }}" alt="Imagen no disponible">
+                {% endif %}
+                <h2>{{ product.nombre }}</h2>
+                <p class="price">${{ "%.2f"|format(product.precio) }}</p>
+                <p class="stock">Stock: {{ product.stock }} unidades</p>
+                
+                {% if product.stock > 0 %}
+                    <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-to-cart-btn">Añadir al Carrito</a>
+                {% else %}
+                    <a href="#" class="add-to-cart-btn" style="background-color: #6c757d; cursor: not-allowed;">Sin Stock</a>
+                {% endif %}
+            </div>
+            {% endfor %} {# Cierre del bucle for #}
+        </div>
+        {% else %} {# Si no hay productos #}
+        <p class="no-products">No hay productos disponibles en este momento. ¡El administrador debe añadirlos!</p>
+        {% endif %} {# Cierre del if products #}
+    </div>
+
+    <div class="footer">
+        © 2024 Mi E-commerce de Bicicletas. Todos los derechos reservados.
+    </div>
+
+</body>
+</html>

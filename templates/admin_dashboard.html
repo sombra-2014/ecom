@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Animación para el degradado de fondo */
+        @keyframes subtleGradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            /* Degradado de fondo moderno y animado */
+            background: linear-gradient(135deg, #2c3e50, #34495e, #2980b9, #8e44ad, #2c3e50);
+            background-size: 400% 400%;
+            animation: subtleGradientShift 20s ease infinite; /* Duración ajustada para ser consistente */
+            color: #333; /* Color de texto predeterminado para el contenido del contenedor */
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px; /* Añadido padding para que el contenedor no toque los bordes en pantallas pequeñas */
+            box-sizing: border-box; /* Asegura que el padding no agregue al width/height total */
+        }
+
+        .container { /* Renombrado de .main-content-container a .container para consistencia */
+            max-width: 1200px;
+            width: 100%; /* Asegura que ocupe el ancho disponible hasta el max-width */
+            margin: 20px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.98); /* Fondo casi opaco */
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25); /* Sombra más pronunciada */
+            z-index: 1;
+            position: relative;
+            animation: fadeInScale 0.5s ease-out; /* Animación de aparición */
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0; /* Borde más suave */
+        }
+        h1 {
+            color: #007bff; /* Azul vibrante */
+            font-weight: 700;
+            margin: 0;
+            font-size: 2.2em; /* Tamaño de fuente más grande */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .logout-link {
+            background-color: #dc3545; /* Rojo para "Cerrar Sesión" */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px; /* Bordes más redondeados */
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .logout-link:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .flash {
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .add-product-btn {
+            background-color: #28a745; /* Verde para "Añadir Nuevo Producto" */
+            color: white;
+            padding: 14px 25px; /* Mayor padding */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em; /* Fuente ligeramente más grande */
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 30px; /* Mayor margen inferior */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+        }
+        .add-product-btn:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate; /* Permite border-radius en la tabla */
+            border-spacing: 0;
+            margin-top: 20px;
+            background-color: #fcfcfc; /* Fondo de tabla muy claro */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Sombra más pronunciada */
+            border-radius: 10px;
+            overflow: hidden; /* Importante para que el border-radius se vea */
+        }
+        th, td {
+            border-bottom: 1px solid #eaf0f6; /* Borde más suave para filas */
+            padding: 15px; /* Mayor padding en celdas */
+            text-align: left;
+        }
+        th {
+            background-color: #007bff; /* Azul para el encabezado de la tabla */
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px; /* Espaciado entre letras */
+        }
+        /* Estilos para las esquinas redondeadas del thead */
+        table thead tr:first-child th:first-child {
+            border-top-left-radius: 10px;
+        }
+        table thead tr:first-child th:last-child {
+            border-top-right-radius: 10px;
+        }
+        /* Eliminar borde inferior de la última fila */
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafd; /* Color de fila par más sutil */
+        }
+        tr:hover { /* Efecto hover para filas */
+            background-color: #eef7ff;
+            transition: background-color 0.2s ease;
+        }
+
+        .action-buttons a, .action-buttons button {
+            display: inline-block;
+            margin-right: 8px;
+            padding: 10px 15px; /* Mayor padding */
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85em;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .action-buttons a.edit {
+            background-color: #ffc107; /* Amarillo para "Editar" */
+            color: #333;
+        }
+        .action-buttons a.edit:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .action-buttons button.delete {
+            background-color: #dc3545; /* Rojo para "Eliminar" */
+            color: white;
+        }
+        .action-buttons button.delete:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .links {
+            margin-top: 40px; /* Mayor margen superior */
+            text-align: center;
+            padding: 20px;
+            background-color: #eaf7fc; /* Fondo claro para el bloque de enlaces */
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .links a {
+            display: inline-block;
+            margin: 0 15px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #cceeff; /* Fondo para enlaces individuales */
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .links a:hover {
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        .no-products-admin {
+            text-align: center;
+            padding: 40px;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+            border: 1px dashed #a0d8f0;
+            color: #555;
+            font-size: 1.1em;
+            margin-top: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra suave */
+        }
+
+        /* Estilos para el botón flotante de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366; /* Color de WhatsApp */
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 4px 4px 6px #666;
+        }
+
+        .whatsapp-icon {
+            width: 35px;
+            height: 35px;
+        }
+
+        /* Media Queries para responsividad */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+                max-width: 95%;
+            }
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 20px;
+            }
+            .admin-header h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+            .logout-link {
+                width: 100%;
+                text-align: center;
+            }
+            .add-product-btn {
+                width: 100%;
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block; /* Para apilar celdas en pantallas pequeñas */
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px; /* Ocultar encabezados de tabla */
+                left: -9999px;
+            }
+            tr {
+                border: 1px solid #e0f2f7;
+                margin-bottom: 15px;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%; /* Espacio para el label simulado */
+                text-align: right;
+            }
+            td:before { /* Simular encabezados en cada celda */
+                position: absolute;
+                left: 6px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: 600;
+                color: #007bff;
+            }
+            /* Labels simulados para cada columna */
+            td:nth-of-type(1):before { content: "ID:"; }
+            td:nth-of-type(2):before { content: "Nombre:"; }
+            td:nth-of-type(3):before { content: "Precio:"; }
+            td:nth-of-type(4):before { content: "Stock:"; }
+            td:nth-of-type(5):before { content: "Acciones:"; }
+
+            .action-buttons {
+                text-align: center; /* Centrar botones de acción */
+                padding-top: 10px;
+            }
+            .action-buttons a, .action-buttons button {
+                display: block; /* Botones apilados */
+                margin: 5px auto; /* Centrar y espaciar */
+                width: calc(100% - 20px); /* Ajuste para padding */
+            }
+            .links {
+                margin-top: 30px;
+                padding: 15px;
+            }
+            .links a {
+                margin: 5px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            .whatsapp-float {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 25px;
+            }
+            .whatsapp-icon {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container"> 
+        <div class="admin-header">
+            <h1>Panel de Administración de Productos</h1>
+            <a href="{{ url_for('logout') }}" class="logout-link">Cerrar Sesión</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for category, message in messages %}
+                <li class="{{ category }} flash">{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+
+        <a href="{{ url_for('admin_add_product') }}" class="add-product-btn">Añadir Nuevo Producto</a>
+
+        {% if products %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.nombre }}</td>
+                        <td>${{ "%.2f"|format(product.precio) }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td class="action-buttons">
+                            <a href="{{ url_for('admin_edit_product', product_id=product.id) }}" class="edit">Editar</a>
+                            <form action="{{ url_for('admin_delete_product', product_id=product.id) }}" method="post" style="display:inline-block;">
+                                <button type="submit" class="delete" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?');">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-products-admin">No hay productos registrados. ¡Añade uno!</p>
+        {% endif %}
+
+        <div class="links">
+            <a href="{{ url_for('products_page') }}">Volver a la Tienda</a>
+        </div>
+    </div> 
+
+   
+</body>
+</html>
